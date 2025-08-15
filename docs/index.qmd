@@ -27,6 +27,17 @@ With the flexibility and expressiveness of the PGM language, I hope these attemp
 
 # Literature Review
 
+#### Brooke and Ketchley
+
+Steven Brooke and Neil Ketchley "Social and Institutional Origins of Political Islam": the spread and the distribution of Muslim Brotherhood branches in the Interwar (1937-1945) Egypt[@brookeSocialInstitutionalOrigins2018]
+
+This recent study on the history of the spread of Muslim Brotherhood in the inter-war period has a special focus on the spatial distribution of MB branches. The dataset they collected and created is available on dataverse.
+
+#### Mark Tessler
+
+In his 1997 article, Mark Tessler used 1988 survey data to argue that understanding popular support for Islamist movements in Arab countries requires distinguishing between Islam as personal and societal salience and the “Political Islam”. This distinction can lead us to see that attitudes toward personal and societal Islam do not necessarily align with attitudes toward political Islam. This insight challenged the prevailing assumption at the time, that support for Islamists, especially their anti-Western attitudes and actions in the news, stemmed directly from religious motives and thus an inevitable "clash of civilizations” owing to contradictory value systems. Thus, exempted attention to the socioeconomic and political grievances that has even stronger associations with the popular leaning to Islamic movements.(@tesslerOriginsPopularSupport1997)
+
+
 # Data Collection
 
 ## Evidence from Public Opinion Surveys
@@ -51,6 +62,8 @@ Allowing for a glimpse into the patterns and variations in attitudes at the indi
 - Long-time Palestinian residents of Kuwait
 
 Which, in turn, provides us the opportunity for understanding and comparison at a more coarse level. This survey project also looked forward to the typicality and generalizability of the sample of Egyptians to represent (Tunisians, Algerians, Jordanians, Moroccans); as for the sample of Kuwaitis to represent those living in the Gulf shakhdoms.
+
+The dimensions of the original data is 885 times 154 variables, which correspond to 102 survey questions.
 
 ## Episodes
 
@@ -77,6 +90,9 @@ Therefore, I reached out first to ICPSR. They looked over the version history an
 
 #### Episode 2
 
+::: {.callout-note appearance="simple" collapse="true"}
+
+:::
 Thanks to the generosity and kindness of Professor Tessler, I have the chance to look into these three groups together. And I worked on to recover the original variables with the researches done in the 1980s, 1990s that used the original variable name, especially:
 
 - Mark Tessler, and Jamal Sanad, "Will the Arab Public Accept Peace with Israel: Evidence From Surveys in Three Arab Societies." In *Israel at the Crossroads*, Gregory Mahler and Efraim Karsh ed. (London: British Academic Press, 1994)(@karshIsraelCrossroadsChallenge1994)^[pp. 48-70]
@@ -90,6 +106,8 @@ Thanks to the generosity and kindness of Professor Tessler, I have the chance to
 After reading the related materials, I was able to map most of the variables to the corresponding questions that were asked. I later went on to recover some of the variables that were not decoded properly.^[most of them were variables that ask the respondent to rank]
 
 Please use the following link to take a glimpse of the 70% recovered codebook for the 1988 survey.
+[1988variables](https://github.com/h-christy/layla/blob/main/ekp-overview.html)
+
 
 # Place the Model
 
@@ -99,10 +117,125 @@ library(tidyverse)
 library(lme4)
 
 ekp_df <- read_csv('data/ekp-1988-survey.csv')
-ekp_df |> colnames()
+ekp_df |> dim() |> print()
+ekp_df |> tail(4)
 ```
 
 ### Dependent V: Support for Political Islam
+
+This project hopes to understand the historical topic-- *Islamic Revival*, *Islamic Radicalization* or *Islamic Ideology*-- that is central to the history of Modern Middle East, by assessing proposed theses and explanations through a 1988 public opinion survey.^[Or the history of Islamic Societies in the modern period. The "Modern" Middle East, for analytical purpose, is commonly agreed to have begun with Napoleon's invasion of Egypt in 1798.] 
+
+The dependent variable of this study is "Support for Political Islam", which I draws on the 1988 survey's effort in measuring how people perceive, at that particular point in time, the ideas, the organizational structures and actions taken to explore the relationships of Islam and politics in that modern world. That is, among the 102 questions in this survey, many of them wanted to understand people's attitude toward Islamic movements, yet we have to be aware that attitudes are not observable, thus, here I am going to use two specific survey items that ask directly about the repsondent's agreement and thoughts on the Islamic movements that were taking place at that time, as a proxy to their opinion on Political Islam.
+
+::: {.callout-tip appearance="simple"}
+
+One of the variable corresponding to the question *Which of the following best represents your political beliefs and orientations?*, seems to be answering the respondent's political affiliation or ideological orientation. Therefore, I also construct a variable called `islamist`, to represent those who answered with either Muslim Brotherhood or other Islamist organization. This variable can be considered as a further step from finding islamist movements agreeable to saying, declaration of their affiliation.
+
+```{.r}
+. tab Q55 GROUP, col missing chi2
+
++-------------------+
+| Key               |
+|-------------------|
+|     frequency     |
+| column percentage |
++-------------------+
+
+ POLITICAL BELIEFS & | EGYPTIANS,KUWAITIS,PALESTINIANS
+        ORIENTATIONS |     EGYPT     KUWAIT  PALESTINI |     Total
+---------------------+---------------------------------+----------
+    ARAB NATIONALISM |       103        117        137 |       357 
+                     |     35.27      39.00      46.76 |     40.34 
+---------------------+---------------------------------+----------
+           SOCIALISM |        57          6         17 |        80 
+                     |     19.52       2.00       5.80 |      9.04 
+---------------------+---------------------------------+----------
+           COMMUNISM |         3          1          3 |         7 
+                     |      1.03       0.33       1.02 |      0.79 
+---------------------+---------------------------------+----------
+          LIBERALISM |        29         17         20 |        66 
+                     |      9.93       5.67       6.83 |      7.46 
+---------------------+---------------------------------+----------
+  MUSLIM BROTHERHOOD |        32         37         18 |        87 
+                     |     10.96      12.33       6.14 |      9.83 
+---------------------+---------------------------------+----------
+E(WAFD)K(TRIB)P(OIG) |         9         32         24 |        65 
+                     |      3.08      10.67       8.19 |      7.34 
+---------------------+---------------------------------+----------
+ E-K OTHER ISLAM ORG |        19         11          1 |        31 
+                     |      6.51       3.67       0.34 |      3.50 
+---------------------+---------------------------------+----------
+E SHARIAH K-P DNKNOW |         6         38         34 |        78 
+                     |      2.05      12.67      11.60 |      8.81 
+---------------------+---------------------------------+----------
+   E DEM K-P SHARIAH |        11         18         20 |        49 
+                     |      3.77       6.00       6.83 |      5.54 
+---------------------+---------------------------------+----------
+  MUSLIM NATIONALISM |         0          3          0 |         3 
+                     |      0.00       1.00       0.00 |      0.34 
+---------------------+---------------------------------+----------
+NATIONALISM MBH TRIB |         0          2          0 |         2 
+                     |      0.00       0.67       0.00 |      0.23 
+---------------------+---------------------------------+----------
+NATIONALISM SOC COMM |         0          1          1 |         2 
+                     |      0.00       0.33       0.34 |      0.23 
+---------------------+---------------------------------+----------
+  DEM BASED ON ISLAM |         0          1          0 |         1 
+                     |      0.00       0.33       0.00 |      0.11 
+---------------------+---------------------------------+----------
+     NATIONALISM&OIG |         0          1          0 |         1 
+                     |      0.00       0.33       0.00 |      0.11 
+---------------------+---------------------------------+----------
+SCIENTIFIC SOCIALISM |         0          1          0 |         1 
+                     |      0.00       0.33       0.00 |      0.11 
+---------------------+---------------------------------+----------
+      MODERATE ISLAM |         0          1          0 |         1 
+                     |      0.00       0.33       0.00 |      0.11 
+---------------------+---------------------------------+----------
+         NATIONALISM |         0          1          2 |         3 
+                     |      0.00       0.33       0.68 |      0.34 
+---------------------+---------------------------------+----------
+           DEMOCRACY |         0          1          0 |         1 
+                     |      0.00       0.33       0.00 |      0.11 
+---------------------+---------------------------------+----------
+ARAB-ISLAMIC NATIONA |         0          6          6 |        12 
+                     |      0.00       2.00       2.05 |      1.36 
+---------------------+---------------------------------+----------
+       SOCIALISM&MBH |         0          1          1 |         2 
+                     |      0.00       0.33       0.34 |      0.23 
+---------------------+---------------------------------+----------
+               SALAF |         0          1          0 |         1 
+                     |      0.00       0.33       0.00 |      0.11 
+---------------------+---------------------------------+----------
+ARAB NATIONALISM&SOC |         0          1          1 |         2 
+                     |      0.00       0.33       0.34 |      0.23 
+---------------------+---------------------------------+----------
+ISLAMIC TAHRIR PARTY |         0          0          1 |         1 
+                     |      0.00       0.00       0.34 |      0.11 
+---------------------+---------------------------------+----------
+                   . |        23          2          7 |        32 
+                     |      7.88       0.67       2.39 |      3.62 
+---------------------+---------------------------------+----------
+               Total |       292        300        293 |       885 
+                     |    100.00     100.00     100.00 |    100.00 
+
+         Pearson chi2(46) = 182.4907   Pr = 0.000
+
+. 
+```
+```{.r}
+ekp_df <- ekp_df |> mutate(islamist = case_when(
+    Q55 %in% c(
+        'MUSLIM BROTHERHOOD', 'ISLAMIC TAHRIR PARTY',
+        'E-K OTHER ISLAM ORG'
+        ) ~ 1,
+    is.na(Q55) ~ NA_integer_,
+    TRUE ~ 0
+))
+ekp_df |> count(islamist)
+```
+:::
+
 
 The main two variables that forms our operationalization of *Support for Political Islam* are:
 
@@ -245,6 +378,9 @@ fa_islam <- fa(islam_df, nfactors = 4, rotate = "varimax", fm = "ml")
 fa.diagram(fa_islam)
 ```
 
+My factor analysis for the Islam related items led me to four dimensions of Islam, I then construct `personal_islam`, `social_islam`, `opp_pol_islam` and `pol_islam` regarding to the clusters.
+
+
 ## Cross Tabulation
 
 
@@ -254,8 +390,8 @@ fa.diagram(fa_islam)
 
 ::: {.callout-tip appearance="simple"}
 
-I am not sure whether I can share the original dataset here, since it has never been published on its own yet. For reference, I provided a pdf of all the variables cross tabulated by `GROUP` (which is the three samples) in STATA, chi-squared test p-values are also presented in the PDF file.
-
+I am not sure whether I can share the original dataset here, since it has never been published on its own yet, and I request it directly from author Mark Tessler. For reference, I provided a pdf of all the variables cross tabulated by `GROUP` (which is the three samples) in STATA, chi-squared test p-values are also presented in the PDF file.
+[cross tabulation](https://github.com/h-christy/layla/blob/main/cross_tabs_grp.pdf)
 :::
 
 
@@ -272,7 +408,7 @@ I am not sure whether I can share the original dataset here, since it has never 
 
 #### Kuwaiti Palestinians or Expatriate Labors
 
-1. Population Size: 300,000
+1. Population Size: 300,000(@clevelandHistoryModernMiddle2013, pp. 404-409)
 ```{r}
 library(lme4)
 ```
@@ -367,7 +503,158 @@ ggsave(filename = "image/multilevel-regression-p3.png", plot = p3, width = 22, h
 
 ## PyMC Model One: Personal-Social Islam * Politically Active = Political Islam?
 
+```{.python}
+#| colab: {base_uri: https://localhost:8080/, height: 35}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import patchworklib as pw
+import pymc as pm
+import arviz as az
+
+# from google.colab import drive
+# drive.mount('/content/drive')
+
+# ekp_df = pd.read_csv('/content/drive/MyDrive/ekp-original/ekp-1988-survey.csv')
+ekp_df.shape
+```
+
+
+```{.python}
+#| colab: {base_uri: https://localhost:8080/}
+from sklearn.model_selection import train_test_split
+
+train_df, test_df = train_test_split(ekp_df, train_size = 0.8, random_state = 5650)
+print(train_df.shape, test_df.shape)
+
+X_train = train_df.drop(columns=['supp_islam_mov', 'relg_awakening', 'pol_islam', 'pol_islam_binary', 'pol_islam0'])
+y_train = train_df['pol_islam_binary']
+X_test = test_df.drop(columns=['supp_islam_mov', 'relg_awakening', 'pol_islam', 'pol_islam_binary', 'pol_islam0'])
+y_test = test_df['pol_islam_binary']
+X_train.shape, X_test.shape, y_train.shape, y_test.shape
+```
+
+```{.python}
+from collections import OrderedDict
+survey_model_aucs = OrderedDict()
+```
+
+```{.python}
+from sklearn.metrics import RocCurveDisplay, auc, roc_curve
+def plot_roc(true_labels, pred_p_pol_islam, plot_title="ROC Curve"):
+    ax = pw.Brick(figsize=(3, 3))
+    model_fpr, model_tpr, model_thresholds = roc_curve(
+        y_true=true_labels, y_score=pred_p_pol_islam, pos_label=1, drop_intermediate=True
+    )
+    model_auc = auc(model_fpr, model_tpr)
+    roc_display = RocCurveDisplay(fpr=model_fpr, tpr=model_tpr, roc_auc=model_auc)
+    roc_display = roc_display.plot(ax=ax, marker="o", markersize=2, plot_chance_level=True)
+    ax.set_title(plot_title);
+    ax.legend(fontsize=10);
+    display(ax.savefig())
+    return model_auc
+```
+
+```{.python}
+#| colab: {base_uri: https://localhost:8080/, height: 576}
+coords = {'response_id': X_train.index.values}
+
+with pm.Model(coords = coords) as active_model:
+    pol_islam_obs = pm.Data('pol_islam_obs', y_train, dims = 'response_id')
+    ps_islam_obs = pm.Data('ps_islam_obs', X_train['persocio_islam0'], dims = 'response_id')
+    pol_act_obs = pm.Data('pol_act_obs', X_train['pol_act0'], dims = 'response_id')
+    alpha = pm.Normal('alpha', 0, 1)
+    beta_p = pm.Normal('beta_p', 0, 1)
+    beta_a = pm.Normal('beta_a', 0, 1)
+    beta_ap = pm.Normal('beta_ap', 0, 1)
+    p_pol_islam = pm.Deterministic(
+        'p_pol_islam',
+        pm.math.invlogit(
+            alpha + beta_p * ps_islam_obs + beta_a * pol_act_obs +
+            beta_ap * (ps_islam_obs * pol_act_obs)
+        ),
+        dims = 'response_id'
+    )
+    pol_islam = pm.Bernoulli(
+        'pol_islam',
+        p = p_pol_islam,
+        observed = pol_islam_obs,
+        dims = 'response_id'
+    )
+pm.model_to_graphviz(active_model)
+```
+![](image/pgm1-vis.png)
+
+```{.python}
+#| colab: {base_uri: https://localhost:8080/, height: 523, referenced_widgets: [d434828eb19044f085bbb27f29f8e4d0, 2d1a5f44f71644a1978a10be4bfc3dd3]}
+with active_model:
+    active_idata = pm.sample(random_seed = 5650)
+
+az.summary(active_idata)
+```
+
+## Point Estimates for Coefficients
+
+```{.python}
+active_estimates = active_idata.posterior[['alpha', 'beta_a', 'beta_p', 'beta_ap']].mean(dim=['chain', 'draw'])
+```
+
+```{/python}
+#| colab: {base_uri: https://localhost:8080/, height: 336}
+active_estimates
+```
+![](image/pgm1-coefs.png)
+
+```{.python}
+#| colab: {base_uri: https://localhost:8080/, height: 447, referenced_widgets: [43cdd0ba638040fcaa288d2d44db47d4, 6147c5dda49a4262b9aea596c965a2e3]}
+with active_model:
+    active_train_idata = pm.sample_posterior_predictive(active_idata, random_seed = 5650)
+az.summary(active_train_idata)
+active_train_means = active_train_idata.posterior_predictive['pol_islam'].mean(dim=['chain','draw'])
+plot_roc(y_train, active_train_means, "Train ROC: idvar Model")
+```
+![](image/pgm1-trainroc.png)
+
+```{.python}
+#| colab: {base_uri: https://localhost:8080/, height: 447, referenced_widgets: [7618c77d6517486b87ec56430d08af06, 5e383d542efe426ea652ac723bb113d6]}
+active_test_coords = {
+    'response_id': X_test.index.values
+}
+with active_model:
+    pm.set_data(
+        {'pol_islam_obs': y_test, 'ps_islam_obs': X_test['persocio_islam0'], 'pol_act_obs': X_test['pol_act0']},
+        coords = active_test_coords
+    )
+with active_model:
+    active_test_idata = pm.sample_posterior_predictive(active_idata, random_seed = 5650)
+
+active_test_mean_pol_islam = active_test_idata.posterior_predictive['pol_islam'].mean(dim=['chain','draw'])
+active_auc = plot_roc(y_test, active_test_mean_pol_islam, "Test ROC: Active in Politics Model")
+survey_model_aucs['idvar'] = active_auc
+survey_model_aucs
+```
+![](image/pgm1-testroc.png)
+
 ## PyMC Model Two: Arab Bitterness, Corruption and Stagnation
 
 ## PyMC Model Three: Identities in the Public, in the World
 
+# Conclusion
+
+1. The demographics of people who support Political Islam were very diverse, sex, age, income, marital status an employment status, therefore, it would be hard if we are trying to build a supporter profile based solely on demographic variables.
+2. The direction of correlations for the personal and social aspects of Islam to that of the political aspect are all positive, yet these measures of religiousity alone would not form a satisfying predictive model.^[the relationship between Islam and law is particularly interesting and among all items they tend to be the most agreeable and most people reached consensus on these items, such as `polpart_shura` and `sharia`]
+3. Add the politically active variable to our model and with an interaction term of `pol_act0` and `persocio_islam0` yields a modest yet still informative improvement to our prediction model. Since our goal was not looking for a model that accurately predict people's attitude, but to understand Political Islam from what we observed in this past survey.
+4. People who ranked Muslim, Islamic World and Islamic Unity as their priority choice for personal identity, national identity and international cooperation, yet these are also shared priority among all groups of our sample.
+5. Negative perceptions and suspicions of the West is a prevailling feature among those who support Political Islam. Yet, this analysis has to be taken with care, since the modern Islamic movements in its inception was one that protested against imperialism and colonialism, which often were brought by the West, gained popularity in the so-called Middle Eastern War of WWI and its aftermath, continued to be the important mobilization of liberation movement after the WW2, supported the nationalist liberation and further became its critic.
+6. Discontent and grievance on socioecon circumstance and their relationship with support for Political Islam in this analysis or the particular sample cannot be proven, the coefficients were not significant, and the slight relationship points us to that those who expressed more financial satisfaction `finan_satis` were more likely to hold a positive view on islamic movements. In addition, the distribution of support for islamic movements among different employment status as well as income level were quite even. I would say that the grievance on socioeconomic conditions can be felt through out the survey, yet it wasn't particularly intense when stratified by supporter of Islamist.
+
+![](image/islamic-world.png)
+
+Lastly, I remembered the first day I walked in my history of Islamic Civilization course in the Fall of 2022, we were ask to share about the reason we decided to enroll in this course, it might seem surprising how hard this question can be for Taiwanese students. My answer was not bad, but our professor very straightforwardly ask the many students who said that they wanted only to practice English, to drop the course (since our professor is from the United States)
+
+This summer, I visited MET in New York and noticed a map at the entrance of the relatively tranquille Islam Art collection room. It mapped us the *Artistic centers and relevant sites and cities, 622-present*, and I immediately spotted my birthplace "Taipei" on the map of **Islamic World**. Yes, at the time, my answer was that because my favorite road: the one that connects my kindergarten, elementary school, high school and university, the Xinsheng E road, often called the Road to Heaven, lies a modest but delicate mosque, which I believe might be one of the reason Taipei has the honor of being part of the Islamic World. 
+
+This study thus hopes to at least invite attention to the Islamic movement, Islamic society and world, which all own a history and from 622 onward have been defined by diversity, at the farside of single or fixed identity, not to mention an innate hostile relationship with other identities.
+
+One recommendation is that a reading of the recent history of the Islamic world (particularly the history of the Middle East in the 20th century)^[like the one I later took *Modern Middle East*] is both relevant and important. Such a reading can be very helpful in understanding their ideologies, the bitterness they carried, their critical and creative power, their social and educational work on the ground, as well as instances of violence.
