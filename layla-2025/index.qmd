@@ -54,7 +54,7 @@ Which, in turn, provides us the opportunity for understanding and comparison at 
 
 ## Episodes
 
-### Episode 1
+#### Episode 1
 
 ::: {.callout-note appearance="simple" appearance="simple" collapse="true"}
 
@@ -75,7 +75,7 @@ Therefore, I reached out first to ICPSR. They looked over the version history an
 
 :::
 
-### Episode 2
+#### Episode 2
 
 Thanks to the generosity and kindness of Professor Tessler, I have the chance to look into these three groups together. And I worked on to recover the original variables with the researches done in the 1980s, 1990s that used the original variable name, especially:
 
@@ -85,7 +85,7 @@ Thanks to the generosity and kindness of Professor Tessler, I have the chance to
 - Mark Tessler, and Ina Warriner. “Gender, Feminism, and Attitudes toward International Conflict: Exploring Relationships with Survey Data from the Middle East.” *World Politics* 49, no. 2 (1997): 250–81. https://doi.org/10.1353/wp.1997.0005.(@tesslerGenderFeminismAttitudes1997)
 - Mark Tessler, “The Origins of Popular Support for Islamist Movements: A Political Economy Analysis.” *Islam, Democracy, and the State in North Africa*, (Bloomington: Indiana University Press, 1997)
 
-### Episode 3
+#### Episode 3
 
 After reading the related materials, I was able to map most of the variables to the corresponding questions that were asked. I later went on to recover some of the variables that were not decoded properly.^[most of them were variables that ask the respondent to rank]
 
@@ -94,7 +94,140 @@ Please use the following link to take a glimpse of the 70% recovered codebook fo
 # Place the Model
 
 ## Dependent and Independent Variables
+```{r}
+library(tidyverse)
+library(lme4)
 
+ekp_df <- read_csv('data/ekp-1988-survey.csv')
+ekp_df |> colnames()
+```
+
+### Dependent V: Support for Political Islam
+
+The main two variables that forms our operationalization of *Support for Political Islam* are:
+
+#### What do you think of the religious awakening now taking place in society?
+
+```{.r}
+. tab Q72 GROUP, col missing chi2
+
++-------------------+
+| Key               |
+|-------------------|
+|     frequency     |
+| column percentage |
++-------------------+
+
+    DO YOU |
+   SUPPORT |
+      CURR |
+ ORGANIZED | EGYPTIANS,KUWAITIS,PALESTINIANS
+ RELG MOVE |     EGYPT     KUWAIT  PALESTINI |     Total
+-----------+---------------------------------+----------
+       YES |        36         45         31 |       112 
+           |     12.33      15.00      10.58 |     12.66 
+-----------+---------------------------------+----------
+  SOMEWHAT |        81        105         94 |       280 
+           |     27.74      35.00      32.08 |     31.64 
+-----------+---------------------------------+----------
+        NO |       149        106        122 |       377 
+           |     51.03      35.33      41.64 |     42.60 
+-----------+---------------------------------+----------
+ UNCERTAIN |        23         42         40 |       105 
+           |      7.88      14.00      13.65 |     11.86 
+-----------+---------------------------------+----------
+         . |         3          2          6 |        11 
+           |      1.03       0.67       2.05 |      1.24 
+-----------+---------------------------------+----------
+     Total |       292        300        293 |       885 
+           |    100.00     100.00     100.00 |    100.00 
+
+          Pearson chi2(8) =  21.7615   Pr = 0.005
+
+. 
+```
+```{r}
+ekp_df |> count(group_name, supp_islam_mov) |>
+  group_by(group_name) |>
+  mutate(
+    pct = 100 * n / sum(n)
+  )
+```
+
+```{r}
+palette4 <- c('#A597C5', '#D2CDDF', '#FFFFD1', '#CEE8B9','#86BDB1', '#54766E')
+na_palette <- c('#E5DED8')
+
+ekp_df |> 
+  count(group_name, supp_islam_mov) |> 
+  group_by(group_name) |> 
+  mutate(pct = 100 * n / sum(n)) |> 
+  ggplot(aes(x = group_name, y = pct, fill = factor(supp_islam_mov))) +
+  geom_col(position = "dodge", color = "grey") +
+  scale_fill_manual(
+    values = c(palette4, na_palette),
+    na.value = na_palette
+  ) +
+  labs(
+    x = "Group",
+    y = "Percentage",
+    fill = "Support Level",
+    title = "Support Islamic Movements"
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  )
+```
+
+#### What do you think of the religious awakening now taking place in society?
+
+```{.r}
+. tab Q69 GROUP, col missing chi2
+
++-------------------+
+| Key               |
+|-------------------|
+|     frequency     |
+| column percentage |
++-------------------+
+
+                     | EGYPTIANS,KUWAITIS,PALESTINIANS
+ RELIGIOUS AWAKENING |     EGYPT     KUWAIT  PALESTINI |     Total
+---------------------+---------------------------------+----------
+         IN FAVOR OF |       181        196        162 |       539 
+                     |     61.99      65.33      55.29 |     60.90 
+---------------------+---------------------------------+----------
+             AGAINST |        63         49         49 |       161 
+                     |     21.58      16.33      16.72 |     18.19 
+---------------------+---------------------------------+----------
+         DO NOT KNOW |        40         51         77 |       168 
+                     |     13.70      17.00      26.28 |     18.98 
+---------------------+---------------------------------+----------
+ AGREE W/O EXTREMISM |         0          2          0 |         2 
+                     |      0.00       0.67       0.00 |      0.23 
+---------------------+---------------------------------+----------
+AGREE IF COM W MODER |         1          1          0 |         2 
+                     |      0.34       0.33       0.00 |      0.23 
+---------------------+---------------------------------+----------
+                   . |         7          1          5 |        13 
+                     |      2.40       0.33       1.71 |      1.47 
+---------------------+---------------------------------+----------
+               Total |       292        300        293 |       885 
+                     |    100.00     100.00     100.00 |    100.00 
+
+         Pearson chi2(10) =  27.7779   Pr = 0.002
+
+. 
+```
+```{r}
+# ekp_df |> count(group_name, relg_awakening) |>
+#   group_by(group_name) |>
+#   mutate(
+#     pct = 100 * n / sum(n)
+#   )
+```
 ### Preparing the variables
 
 I reconstructed most of the attitudinal variables into scales of 1–4 or 1–3, in order to preserve their ordinal nature and to allow further aggregation and averaging into broader composite scales.
@@ -102,11 +235,6 @@ I reconstructed most of the attitudinal variables into scales of 1–4 or 1–3,
 ```{r}
 library(tidyverse)
 library(psych)
-```
-
-```{r}
-ekp_df <- read_csv('data/ekp-1988-survey.csv')
-ekp_df |> colnames()
 ```
 ```{r}
 islam_cols <- c("supp_islam_mov", "relg_awakening", "quran_freq", "ref_relg_freq", "sharia_sociolife", "sharia_crim_civ", "relg_study", "sep_relg_politics", "priv_relg")
@@ -128,14 +256,18 @@ fa.diagram(fa_islam)
 I am not sure whether I can share the original dataset here, since it has never been published on its own yet. For reference, I provided a pdf of all the variables cross tabulated by `GROUP` (which is the three samples) in STATA, chi-squared test p-values are also presented in the PDF file.
 
 :::
+
+
 #### Cairenes living in *America's Egypt*: the 1980s
 
 1. Population Size: 9,000,000 in Cairo
-2. 
+2. Political Form: Secularized State and Islamic Opposition(@lapidusHistoryIslamicSocieties2014)^[military authoritarian regime with some democratic opening in the 1980s]
+3. 
 
 #### Being a Citizen of Kuwait before the 2nd Gulf War
 
 1. Population Size: 850,000
+2. Political Form: Monarchy and welfare programs
 
 #### Kuwaiti Palestinians or Expatriate Labors
 
@@ -236,5 +368,5 @@ ggsave(filename = "image/multilevel-regression-p3.png", plot = p3, width = 22, h
 
 ## PyMC Model Two: Arab Bitterness, Corruption and Stagnation
 
-## PyMC Model Three: Identities in the Public, the World
+## PyMC Model Three: Identities in the Public, in the World
 
