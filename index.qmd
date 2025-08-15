@@ -13,7 +13,7 @@ title-block-banner-color: "#6F6F6F"
 format:
   html:
     df-print: kable
-    embed-resources: true
+    # embed-resources: true
     theme: default
     css: styles.css
 bibliography: causal.bib
