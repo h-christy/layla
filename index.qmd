@@ -69,9 +69,9 @@ The dimensions of the original data is 885 times 154 variables, which correspond
 
 #### Episode 1
 
-::: {.callout-note appearance="simple" appearance="simple" collapse="true"}
+::: {.callout-tip appearance="simple"}
 
-### Inquiry regarding missing sample and Request for original survey questionnaire
+##### Inquiry regarding missing sample and Request for original survey questionnaire
 
 I first encountered the 1988 public opinion survey while reading Tessler's *"The origins of popular support for Islamist movements: A political economy analysis (1997)"*[@tesslerOriginsPopularSupport1997] Later, I was able to find this dataset available on ICPSR, presented in *Carnegie Middle East Governance and Islam Dataset, 1988-2014 (ICPSR 32302)*[@tesslerCarnegieMiddleEast2016a] This dataset is an effort to gather surveys across the period, reorganize and harmonize the survey items into variables that allow for analysis over time. Therefore, some of survey items that Tessler used in his analysis cannot be found in the dataset, and the codebook contains limited descriptions for the 1988 survey.
 
@@ -90,9 +90,6 @@ Therefore, I reached out first to ICPSR. They looked over the version history an
 
 #### Episode 2
 
-::: {.callout-note appearance="simple" collapse="true"}
-
-:::
 Thanks to the generosity and kindness of Professor Tessler, I have the chance to look into these three groups together. And I worked on to recover the original variables with the researches done in the 1980s, 1990s that used the original variable name, especially:
 
 - Mark Tessler, and Jamal Sanad, "Will the Arab Public Accept Peace with Israel: Evidence From Surveys in Three Arab Societies." In *Israel at the Crossroads*, Gregory Mahler and Efraim Karsh ed. (London: British Academic Press, 1994)(@karshIsraelCrossroadsChallenge1994)^[pp. 48-70]
@@ -127,7 +124,8 @@ This project hopes to understand the historical topic-- *Islamic Revival*, *Isla
 
 The dependent variable of this study is "Support for Political Islam", which I draws on the 1988 survey's effort in measuring how people perceive, at that particular point in time, the ideas, the organizational structures and actions taken to explore the relationships of Islam and politics in that modern world. That is, among the 102 questions in this survey, many of them wanted to understand people's attitude toward Islamic movements, yet we have to be aware that attitudes are not observable, thus, here I am going to use two specific survey items that ask directly about the repsondent's agreement and thoughts on the Islamic movements that were taking place at that time, as a proxy to their opinion on Political Islam.
 
-::: {.callout-tip appearance="simple"}
+#### Which of the following best represents your political beliefs and orientations?
+
 
 One of the variable corresponding to the question *Which of the following best represents your political beliefs and orientations?*, seems to be answering the respondent's political affiliation or ideological orientation. Therefore, I also construct a variable called `islamist`, to represent those who answered with either Muslim Brotherhood or other Islamist organization. This variable can be considered as a further step from finding islamist movements agreeable to saying, declaration of their affiliation.
 
@@ -234,12 +232,11 @@ ekp_df <- ekp_df |> mutate(islamist = case_when(
 ))
 ekp_df |> count(islamist)
 ```
-:::
 
 
 The main two variables that forms our operationalization of *Support for Political Islam* are:
 
-#### What do you think of the religious awakening now taking place in society?
+#### Do you support the current organized religious movements?
 
 ```{.r}
 . tab Q72 GROUP, col missing chi2
