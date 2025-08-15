@@ -156,6 +156,7 @@ ekp_df |> count(group_name, supp_islam_mov) |>
 
 ```{r}
 palette4 <- c('#A597C5', '#D2CDDF', '#FFFFD1', '#CEE8B9','#86BDB1', '#54766E')
+
 na_palette <- c('#E5DED8')
 
 ekp_df |> 
