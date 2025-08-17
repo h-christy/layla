@@ -425,6 +425,7 @@ eg_lm <- lm(pol_islam0 ~ persocio_islam0, data = ekp_df|> filter(group_name == "
 ku_lm <- lm(pol_islam0 ~ persocio_islam0, data = ekp_df|> filter(group_name == "Kuwaiti"))
 pa_lm <- lm(pol_islam0 ~ persocio_islam0, data = ekp_df|> filter(group_name == "Palestinian"))
 full_lm <- lm(pol_islam0 ~ persocio_islam0, data = ekp_df)
+
 adapt_lm <- lmer(pol_islam0 ~ persocio_islam0 + (1 + persocio_islam0 | group_name), data = ekp_df)
 
 full_coef <- tibble(
@@ -650,7 +651,7 @@ survey_model_aucs
 
 Lastly, I remembered the first day I walked in my history of Islamic Civilization course in the Fall of 2022, we were ask to share about the reason we decided to enroll in this course, it might seem surprising how hard this question can be for Taiwanese students. My answer was not bad, but our professor very straightforwardly ask the many students who said that they wanted only to practice English, to drop the course (since our professor is from the United States)
 
-This summer, I visited MET in New York and noticed a map at the entrance of the relatively tranquille Islam Art collection room. It mapped us the *Artistic centers and relevant sites and cities, 622-present*, and I immediately spotted my birthplace "Taipei" on the map of **Islamic World**. Yes, at the time, my answer was that because my favorite road: the one that connects my kindergarten, elementary school, high school and university, the Xinsheng E road, often called the Road to Heaven, lies a modest but delicate mosque, which I believe might be one of the reason Taipei has the honor of being part of the Islamic World. 
+This summer, I visited MET in New York and noticed a map at the entrance of the relatively tranquille Islam Art collection room. It mapped us the *Artistic centers and relevant sites and cities, 622-present*, and I immediately spotted my birthplace "Taipei" on the map of **Islamic World**. Yes, at the time, my answer was that because my favorite road: the one that connects my kindergarten, elementary school, high school and university, the Xinsheng S road, often called the Road to Heaven, lies a modest but delicate mosque, which I believe might be one of the reason Taipei has the honor of being part of the Islamic World. 
 
 This study thus hopes to at least invite attention to the Islamic movement, Islamic society and world, which all own a history and from 622 onward have been defined by diversity, at the farside of single or fixed identity, not to mention an innate hostile relationship with other identities.
 
